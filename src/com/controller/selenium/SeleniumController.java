@@ -14,17 +14,22 @@ import com.controller.selenium.util.ByType;
 import lombok.Data;
 
 @Data
-public class BaseSeleniumTestCase {
+public class SeleniumController {
 	/**
 	 * The base driver to use for executing against the browser
 	 */
 	private WebDriver driver;
 	
 	/**
+	 * Default constructor
+	 */
+	public SeleniumController() {}
+	
+	/**
 	 * Constructor that requires a driver class.
 	 * @param driver the driver instance, can be Firefox, IE, Chrome, etc
 	 */
-	public BaseSeleniumTestCase(WebDriver driver) {
+	public SeleniumController(WebDriver driver) {
 		this.driver = driver;
 	}
 	
