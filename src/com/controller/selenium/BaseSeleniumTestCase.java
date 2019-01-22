@@ -1,5 +1,6 @@
 package com.controller.selenium;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -95,6 +96,94 @@ public class BaseSeleniumTestCase {
 		return results;
 	}
 	
+	/**
+	 * Method used to obtain a listing of elements that match the CSS selector value passed in. 
+	 * @param cssSelector the CSS selection string
+	 * @return a listing of {@link WebElement} objects that match the requested CSS selector value
+	 * @throws SeleniumControllerException throws this exception if the element is not found
+	 */
+	protected List<WebElement> getElementsByCss(String cssSelector) throws SeleniumControllerException {
+		List<WebElement> results = getElementsBy(ByType.CSS, cssSelector);
+		if(results.size() == 0) {
+			throw new SeleniumControllerException(SeleniumControllerErrorCode.NOT_FOUND, 
+					"Unable to find a matching element with the css selector of '" + cssSelector + "'.");
+		}
+		
+		return results;
+	}
+	
+	/**
+	 * Method used to obtain a listing of elements that match in full the passed in link text. So if passed in foo and the link was 'foo bar'
+	 * it would not locate or return the link element.
+	 * @param linkText the entire string of visible link text to search on
+	 * @return a listing of {@link WebElement} objects that match the requested link text
+	 * @throws SeleniumControllerException throws this exception if the element is not found
+	 */
+	protected List<WebElement> getElementsByLinkText(String linkText) throws SeleniumControllerException {
+		List<WebElement> results = getElementsBy(ByType.LINK_TEXT, linkText);
+		if(results.size() == 0) {
+			throw new SeleniumControllerException(SeleniumControllerErrorCode.NOT_FOUND, 
+					"Unable to find a matching element with the link text of '" + linkText + "'.");
+		}
+		
+		return results;
+	}
+	
+	/**
+	 * Method used to obtain a listing of elements that match in part the passed in link text. So if passed in foo and the link was 'foo bar'
+	 * it would locate and return the link element.
+	 * @param linkText the section of the visible link text to search on
+	 * @return a listing of {@link WebElement} objects that match the requested partial link text
+	 * @throws SeleniumControllerException throws this exception if the element is not found
+	 */
+	protected List<WebElement> getElementsByPartialLinkText(String linkText) throws SeleniumControllerException {
+		List<WebElement> results = getElementsBy(ByType.PARTIAL_LINK_TEXT, linkText);
+		if(results.size() == 0) {
+			throw new SeleniumControllerException(SeleniumControllerErrorCode.NOT_FOUND, 
+					"Unable to find a matching element with the link text partially of '" + linkText + "'.");
+		}
+		
+		return results;
+	}
+	
+	/**
+	 * Method used to obtain a listing of elements that match the name of the HTML tag passed in.
+	 * @param tagName the HTML tag name to get all elements for
+	 * @return a listing of {@link WebElement} objects that match the requested tag name
+	 * @throws SeleniumControllerException throws this exception if the element is not found
+	 */
+	protected List<WebElement> getElementsByTagName(String tagName) throws SeleniumControllerException {
+		List<WebElement> results = getElementsBy(ByType.TAG_NAME, tagName);
+		if(results.size() == 0) {
+			throw new SeleniumControllerException(SeleniumControllerErrorCode.NOT_FOUND, 
+					"Unable to find a matching element with the tag name of '" + tagName + "'.");
+		}
+		
+		return results;
+	}
+	
+	/**
+	 * Method used to obtain a listing of elements that match the xpath search criteria.
+	 * @param tagName the xpath search criteria to get all elements for
+	 * @return a listing of {@link WebElement} objects that match the requested xpath search criteria
+	 * @throws SeleniumControllerException throws this exception if the element is not found
+	 */
+	protected List<WebElement> getElementsByXPath(String xpath) throws SeleniumControllerException {
+		List<WebElement> results = getElementsBy(ByType.XPATH, xpath);
+		if(results.size() == 0) {
+			throw new SeleniumControllerException(SeleniumControllerErrorCode.NOT_FOUND, 
+					"Unable to find a matching element with the xpath of '" + xpath + "'.");
+		}
+		
+		return results;
+	}
+	
+	/**
+	 * Used to determine the proper calls to make to the Selenium driver for obtaining the required {@link WebElement}
+	 * @param type the {@link ByType} we are attempting to utilize to query the DOM
+	 * @param value the value associated to actually perform the query
+	 * @return the listing of all elements that match the criteria, or an empty list if not applicable
+	 */
 	private List<WebElement> getElementsBy(ByType type, String value) {
 		switch(type) {
 		case ID:
@@ -104,19 +193,19 @@ public class BaseSeleniumTestCase {
 		case CLASS_NAME:
 			return driver.findElements(By.className(value));
 		case CSS:
-			break;
+			return driver.findElements(By.cssSelector(value));
 		case LINK_TEXT:
-			break;
+			return driver.findElements(By.linkText(value));
 		case PARTIAL_LINK_TEXT:
-			break;
+			return driver.findElements(By.partialLinkText(value));
 		case TAG_NAME:
-			break;
+			return driver.findElements(By.tagName(value));
 		case XPATH:
-			break;
+			return driver.findElements(By.xpath(value));
 		default:
 			break;
 		}
-		return null;
+		return new ArrayList<WebElement>();
 	}
 	
 	private boolean checkNameValidity(String input) {
